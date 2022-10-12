@@ -1,16 +1,12 @@
-
-
 final class AdDetailInteractor {
     
-    var presenter: AdDetailInteractorOutputProtocol?
+    weak var presenter: AdDetailInteractorOutputProtocol?
     
     //MARK: Private properties
-    private(set) var classifiedAd: ClassifiedAd
-    private(set) var categories: [Category]
+    private(set) var ad: AdModel
     
-    init(classifiedAd: ClassifiedAd, categories: [Category]) {
-        self.classifiedAd = classifiedAd
-        self.categories = categories
+    init(ad: AdModel) {
+        self.ad = ad
     }
 }
  

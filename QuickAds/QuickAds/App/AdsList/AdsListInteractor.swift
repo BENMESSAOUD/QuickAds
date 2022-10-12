@@ -1,7 +1,8 @@
+import Darwin
 
 final class AdsListInteractor {
     
-    var presenter: AdsListInteractorOutputProtocol?
+    weak var presenter: AdsListInteractorOutputProtocol?
     private let networkService: NetworkServiceProtocol
     private var adsList: [ClassifiedAd] = []
     private var adsCategories: [Category] = []
@@ -31,12 +32,11 @@ final class AdsListInteractor {
         }
     }
     
-    private func filtreAds(by categories: [Category]) -> [ClassifiedAd] {
+    private func filtreAds(by categories: [Int64]) -> [ClassifiedAd] {
         if categories.isEmpty {
             return adsList
         }
-        let categoriesIds = categories.map(\.id)
-        return adsList.filter({ categoriesIds.contains($0.category_id) })
+        return adsList.filter({ categories.contains($0.category_id) })
     }
     
     private func sortUrgentAds(list: [ClassifiedAd]) -> [ClassifiedAd] {
@@ -57,7 +57,7 @@ final class AdsListInteractor {
                 case let .success(adsList):
                     self.adsList = self.sortUrgentAds(list: adsList)
                     
-                    self.applyFilter(filter)
+                    self.applyFilter()
                     
                 case let .failure(error):
                     let message = createErrorMessage(error)
@@ -77,7 +77,7 @@ final class AdsListInteractor {
                 switch result {
                 case let .success(categories):
                     self.adsCategories = categories
-                    self.applyFilter(filter)
+                    self.applyFilter()
                     
                 case .failure(_):
                     presenter?.loadCategoriesDidFail()
@@ -88,23 +88,39 @@ final class AdsListInteractor {
         }
     }
     
+    private func applyFilter() {
+        let filtredList = filtreAds(by: filter.categories)
+        presenter?.updateContent(filtredList, categories: adsCategories)
+    }
+    
+    
 }
  
 // MARK: - AdsList Interactor Input Protocol conformance
 extension AdsListInteractor: AdsListInteractorInputProtocol {
+    
     func loadAll() {
         loadAllCategories()
         loadAllAds()
     }
     
-    func applyFilter(_ filter: AdsFilter) {
-        self.filter = filter
-        let filtredList = filtreAds(by: filter.categories)
-        presenter?.updateContent(filtredList, categories: adsCategories)
+    func getCategoryName(id: Int64) -> String? {
+        adsCategories.first(where: { $0.id == id })?.name
     }
     
-    func getAd(at index: Int) -> ClassifiedAd {
-        adsList[index]
+    func getSelectedCategoriesFilter() -> [Int64] {
+        filter.categories
+    }
+    
+    func addCategoryFilter(id: Int64) {
+        if filter.categories.contains(id) { return }
+        filter.categories.append(id)
+        applyFilter()
+    }
+    
+    func removeCategoryFilter(id: Int64) {
+        filter.categories.removeAll(where: { $0 == id })
+        applyFilter()
     }
 
 }

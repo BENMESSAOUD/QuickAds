@@ -7,6 +7,8 @@ enum AdsListPresenterUnit {
     }
     enum Action {
         case tableDidSelectItem(at: Int)
+        case didSelectCategoryFilter(_ id: Int64)
+        case didDeselectCategoryFilter(_ id: Int64)
     }
 }
 
@@ -17,6 +19,7 @@ final class AdsListPresenter {
     private var interactor: AdsListInteractorInputProtocol
     private let router: AdsListRouterProtocol
     private let viewModel: AdsListViewModel
+    private var displayedList: [ClassifiedAd] = []
     
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -41,7 +44,7 @@ final class AdsListPresenter {
 
 //MARK: - AdsList presenter protocol conformance
 extension AdsListPresenter: AdsListPresenterProtocol {
-    func handle(viewEvent: AdsListPresenterUnit.Event) {
+    @MainActor func handle(viewEvent: AdsListPresenterUnit.Event) {
         switch viewEvent {
         case .viewDidLoad:
             interactor.loadAll()
@@ -52,8 +55,25 @@ extension AdsListPresenter: AdsListPresenterProtocol {
     func handle(viewAction: AdsListPresenterUnit.Action) {
         switch viewAction {
         case let .tableDidSelectItem(at: index):
-            let ad = interactor.getAd(at: index)
-            router.navigate(to: .adsDetails(ad))
+            let classifiedAd = displayedList[index]
+            let adModel = AdModel(
+                title: classifiedAd.title,
+                categoryName: interactor.getCategoryName(id: classifiedAd.category_id) ?? "",
+                date: classifiedAd.creation_date,
+                description: classifiedAd.description,
+                isUrgent: classifiedAd.is_urgent,
+                imagesUrl: classifiedAd.images_url,
+                price: classifiedAd.price,
+                isPro: classifiedAd.siret?.isEmpty == false
+            )
+
+            router.navigate(to: .adsDetails(adModel))
+            
+        case let .didSelectCategoryFilter(id):
+            interactor.addCategoryFilter(id: id)
+            
+        case let .didDeselectCategoryFilter(id):
+            interactor.removeCategoryFilter(id: id)
         }
     }
 }
@@ -62,6 +82,8 @@ extension AdsListPresenter: AdsListPresenterProtocol {
 extension AdsListPresenter: AdsListInteractorOutputProtocol {
     
     func updateContent(_ adsList: [ClassifiedAd], categories: [Category]) {
+        displayedList = adsList
+        let selectedCategories = interactor.getSelectedCategoriesFilter()
         viewModel.rows = adsList.map({ ad in
             AdRow(
                 title: ad.title,
@@ -72,7 +94,13 @@ extension AdsListPresenter: AdsListInteractorOutputProtocol {
                 isUrgent: ad.is_urgent
             )
         })
-        viewModel.categories = categories.map(\.name)
+        viewModel.categories = categories.map{
+            CategoriesFilterRow(
+                id: $0.id,
+                name: $0.name,
+                isSelected: selectedCategories.contains($0.id)
+            )
+        }
         
     }
     

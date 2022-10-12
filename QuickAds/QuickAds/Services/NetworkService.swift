@@ -13,7 +13,13 @@ protocol NetworkServiceProtocol {
 }
 
 protocol URLSessionProtocol {
+    var cache: URLCacheProtocol? { get }
     func data(from url: URL) async throws -> (Data, URLResponse)
+}
+
+protocol URLCacheProtocol {
+    func cachedResponse(for request: URLRequest) -> CachedURLResponse?
+    func storeCachedResponse(_ cachedResponse: CachedURLResponse, for request: URLRequest)
 }
 
 enum NetworkError: Error {
@@ -46,7 +52,17 @@ final class NetworkService {
         return formatter
     }()
     
-    init(decoder: JSONDecoder = JSONDecoder(), urlSession: URLSessionProtocol = URLSession.shared) {
+    static private let allowedDiskSize = 100 * 1024 * 1024
+    static private let cache = URLCache(memoryCapacity: 0, diskCapacity: allowedDiskSize, diskPath: "QuickAdCache")
+    
+    static var defaultUrlSession: URLSession {
+        let sessionConfiguration = URLSessionConfiguration.default
+            sessionConfiguration.requestCachePolicy = .returnCacheDataElseLoad
+            sessionConfiguration.urlCache = cache
+            return URLSession(configuration: sessionConfiguration)
+    }
+    
+    init(decoder: JSONDecoder = JSONDecoder(), urlSession: URLSessionProtocol = defaultUrlSession) {
         self.urlSession = urlSession
         self.decoder = decoder
         self.decoder.dateDecodingStrategy = .formatted(dateFormatter)
@@ -59,13 +75,24 @@ final class NetworkService {
     private func performRequest<T: Decodable>(path: Path) async throws -> Result<T, NetworkError> {
         guard let url = url(for: path) else { return .failure(.wrongURLFormat) }
         
+        let urlRequest = URLRequest(url: url)
+        if let cachedData = urlSession.cache?.cachedResponse(for: urlRequest) {
+            do {
+                let object = try decoder.decode(T.self, from: cachedData.data)
+                return .success(object)
+            } catch {
+                return .failure(.badJSONFormat)
+            }
+        }
+        
         let (data, response) = try await urlSession.data(from: url)
-        
         guard let statusCode = (response as? HTTPURLResponse)?.statusCode else { return .failure(.unknown) }
-        
         switch statusCode {
         case 200...203:
             do {
+                let cachedData = CachedURLResponse(response: response, data: data)
+                urlSession.cache?.storeCachedResponse(cachedData, for: urlRequest)
+                
                 let object = try decoder.decode(T.self, from: data)
                 return .success(object)
             } catch {
@@ -93,7 +120,12 @@ extension NetworkService: NetworkServiceProtocol {
     }
 }
 
+extension URLCache: URLCacheProtocol {}
+
 extension URLSession: URLSessionProtocol {
+    var cache: URLCacheProtocol? {
+        configuration.urlCache
+    }
     func data(from url: URL) async throws -> (Data, URLResponse) {
         if #available(iOS 15.0, *) {
             return try await data(from: url, delegate: nil)

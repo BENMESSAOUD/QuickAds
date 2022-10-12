@@ -14,7 +14,11 @@ class NetworkServiceTests: XCTestCase {
     //MARK: - Unit Test
     func test_performRequest_should_FailWithUnknownError_when_CodeStatusNotDetermined() async throws {
         //given
+        let urlCache = MockedURLCache()
+        urlCache.cachedResponseBehaviour = .null
+        urlSession.cache = urlCache
         urlSession.behaviour = .data(Data(), URLResponse())
+        
         let networkService = NetworkService(urlSession: urlSession)
         
         //when
@@ -32,6 +36,9 @@ class NetworkServiceTests: XCTestCase {
             httpVersion: nil,
             headerFields: nil
         )
+        let urlCache = MockedURLCache()
+        urlCache.cachedResponseBehaviour = .null
+        urlSession.cache = urlCache
         urlSession.behaviour = .data(Data(), urlResponse!)
         let networkService = NetworkService(urlSession: urlSession)
         
@@ -50,6 +57,9 @@ class NetworkServiceTests: XCTestCase {
             httpVersion: nil,
             headerFields: nil
         )
+        let urlCache = MockedURLCache()
+        urlCache.cachedResponseBehaviour = .null
+        urlSession.cache = urlCache
         urlSession.behaviour = .data(Data(), urlResponse!)
         let networkService = NetworkService(urlSession: urlSession)
         
@@ -62,6 +72,9 @@ class NetworkServiceTests: XCTestCase {
     
     func test_performRequest_should_FailWithServerError_when_CodeStatusIs5xx() async throws {
         //given
+        let urlCache = MockedURLCache()
+        urlCache.cachedResponseBehaviour = .null
+        urlSession.cache = urlCache
         let urlResponse = HTTPURLResponse(
             url: URL(string: "https://anyUrl.com")!,
             statusCode: 500,
@@ -80,6 +93,9 @@ class NetworkServiceTests: XCTestCase {
     
     func test_performRequest_should_FailWithUnknownError_when_CodeStatusIsNotHandled() async throws {
         //given
+        let urlCache = MockedURLCache()
+        urlCache.cachedResponseBehaviour = .null
+        urlSession.cache = urlCache
         let urlResponse = HTTPURLResponse(
             url: URL(string: "https://anyUrl.com")!,
             statusCode: 1000,
@@ -98,6 +114,9 @@ class NetworkServiceTests: XCTestCase {
     
     func test_performRequest_should_FailWithJSONError_when_DataIsEmpty() async throws {
         //given
+        let urlCache = MockedURLCache()
+        urlCache.cachedResponseBehaviour = .null
+        urlSession.cache = urlCache
         let urlResponse = HTTPURLResponse(
             url: URL(string: "https://anyUrl.com")!,
             statusCode: 200,
@@ -124,6 +143,9 @@ class NetworkServiceTests: XCTestCase {
         )
         let jsonString = "{\"result\": 3}"
         let data = jsonString.data(using: .utf8)!
+        let urlCache = MockedURLCache()
+        urlCache.cachedResponseBehaviour = .null
+        urlSession.cache = urlCache
         urlSession.behaviour = .data(data, urlResponse!)
         let networkService = NetworkService(urlSession: urlSession)
         
@@ -153,6 +175,9 @@ class NetworkServiceTests: XCTestCase {
           }]
         """
         let data = jsonString.data(using: .utf8)!
+        let urlCache = MockedURLCache()
+        urlCache.cachedResponseBehaviour = .null
+        urlSession.cache = urlCache
         urlSession.behaviour = .data(data, urlResponse!)
         let networkService = NetworkService(urlSession: urlSession)
         let expectedCategories = [

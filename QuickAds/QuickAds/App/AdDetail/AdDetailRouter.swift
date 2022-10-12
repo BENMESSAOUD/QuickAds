@@ -1,11 +1,10 @@
 import UIKit
 
 enum AdDetailModule {
-
     /// AdDetail module configuration
     struct Configuration {
-        /* Add here module configuration properties. */
-        let classifiedAd: ClassifiedAd
+        /// The ad model to display
+        let ad: AdModel
     }
 }
 
@@ -27,7 +26,7 @@ final class AdDetailRouter {
     func makeInitial() -> UIViewController {
         let adDetailView = AdDetailView()
        
-        let interactor = AdDetailInteractor(classifiedAd: configuration.classifiedAd)
+        let interactor = AdDetailInteractor(ad: configuration.ad)
         let presenter = AdDetailPresenter(
             view: adDetailView,
             interactor: interactor,

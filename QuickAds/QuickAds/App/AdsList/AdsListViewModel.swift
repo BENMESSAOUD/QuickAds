@@ -4,9 +4,9 @@ import Foundation
 final class AdsListViewModel: ObservableObject {
     let title: String
     @Published var rows: [AdRow]
-    @Published var categories: [String]
+    @Published var categories: [CategoriesFilterRow]
     
-    init(title: String, rows: [AdRow] = [], categories: [String] = []) {
+    init(title: String, rows: [AdRow] = [], categories: [CategoriesFilterRow] = []) {
         self.title = title
         self.rows = rows
         self.categories = categories

@@ -16,8 +16,7 @@ enum AdsListModule {
     /// Enumeration of wireframes to which the module can navigate.
     enum Wireframe {
         /* Add here all module's kind to which this router can navigate according to the context. */
-        case adsDetails(_ ad: ClassifiedAd)
-        case adsFilter
+        case adsDetails(_ ad: AdModel)
         case alert(title: String, message: String)
     }
 }
@@ -62,14 +61,13 @@ extension AdsListRouter: AdsListRouterProtocol {
     func navigate(to module: AdsListModule.Wireframe) {
         switch module {
         case let .adsDetails(ad):
-            let adDetailModule = AdDetailRouter(configuration: .init(classifiedAd: ad))
+            let adDetailModule = AdDetailRouter(configuration: .init(ad: ad))
             let viewController = adDetailModule.makeInitial()
             view?.navigationController?.pushViewController(viewController, animated: true)
-            
-        case .adsFilter:
-            break
+
         case .alert(title: let title, message: let message):
-            break
+            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            view?.present(alertController, animated: true)
         }
     }
 }

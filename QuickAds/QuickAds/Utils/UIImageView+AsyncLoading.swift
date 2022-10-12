@@ -9,6 +9,10 @@ import Foundation
 import UIKit
 
 extension UIImageView {
+    
+    /// Loads and set with asynchrony way the image from a given URL
+    ///
+    /// When loading starts, a loader is added and showed into the image view. and it get removed when image loading ends.
     func asyncImage(url: URL?) {
         if let url = url{
             let loader = UIActivityIndicatorView(style: .medium)

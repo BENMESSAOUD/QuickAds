@@ -5,9 +5,7 @@ import UIKit
 /// Add here your methods for communication PRESENTER -> VIEW
 protocol AdsListViewProtocol: AnyObject {
     var presenter: AdsListPresenterProtocol?  { get set }
-    func bind(viewModel: AdsListViewModel)
-    func startLoading()
-    func stopLoading()
+    @MainActor func bind(viewModel: AdsListViewModel)
 }
 
 //MARK: - Router
@@ -28,12 +26,14 @@ protocol AdsListPresenterProtocol {
 protocol AdsListInteractorInputProtocol {
     var presenter: AdsListInteractorOutputProtocol?  { get set }
     func loadAll()
-    func applyFilter(_ filter: AdsFilter)
-    func getAd(at index: Int) -> ClassifiedAd
+    func getCategoryName(id: Int64) -> String?
+    func getSelectedCategoriesFilter() -> [Int64]
+    func addCategoryFilter(id: Int64)
+    func removeCategoryFilter(id: Int64)
 }
 
 // Add here your methods for communication INTERACTOR -> PRESENTER
-protocol AdsListInteractorOutputProtocol {
+protocol AdsListInteractorOutputProtocol: AnyObject {
     func updateContent(_ adsList: [ClassifiedAd], categories: [Category])
     func loadAdsDidFail(message: String)
     func loadCategoriesDidFail()

@@ -15,6 +15,8 @@ enum URLSessionBehaviour {
 }
 
 final class MockedURLSession: URLSessionProtocol {
+    var cache: URLCacheProtocol?
+    
     var behaviour: URLSessionBehaviour = .realCall
     
     func data(from url: URL) async throws -> (Data, URLResponse) {
@@ -27,4 +29,32 @@ final class MockedURLSession: URLSessionProtocol {
             return try await URLSession.shared.data(from: url)
         }
     }
+}
+
+enum URLCacheBehaviours {
+    enum CachedResponseBehaviour {
+        case null
+        case response(CachedURLResponse)
+    }
+}
+
+final class MockedURLCache: URLCacheProtocol {
+    
+    private(set) var storeCachedResponseDidCall = false
+    var cachedResponseBehaviour: URLCacheBehaviours.CachedResponseBehaviour = .null
+    
+    func cachedResponse(for request: URLRequest) -> CachedURLResponse? {
+        switch cachedResponseBehaviour {
+        case .null:
+            return nil
+        case .response(let cachedURLResponse):
+            return cachedURLResponse
+        }
+    }
+    
+    func storeCachedResponse(_ cachedResponse: CachedURLResponse, for request: URLRequest) {
+        storeCachedResponseDidCall = true
+    }
+    
+    
 }

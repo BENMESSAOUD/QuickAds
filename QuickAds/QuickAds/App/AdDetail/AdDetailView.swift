@@ -13,7 +13,7 @@ final class AdDetailView: UIViewController {
     // MARK: View Life Cycle Methods
 	override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = Colors.mainContainer
         prepareMainStackView()
         presenter?.handle(viewEvent: .viewDidLoad)
     }
@@ -33,12 +33,14 @@ final class AdDetailView: UIViewController {
     
     private func prepareAdInformationScrollView() {
         adInformationStackView.distribution = .fill
-        adInformationStackView.alignment = .leading
+        adInformationStackView.alignment = .fill
         adInformationStackView.axis = .vertical
         adInformationStackView.spacing = 8
+        adInformationStackView.backgroundColor = Colors.secondaryContainer
+        adInformationScrollView.backgroundColor = Colors.secondaryContainer
         adInformationScrollView.addSubview(adInformationStackView)
         adInformationStackView.makeConstraintsToSuperview(constraints: [
-            .topToTop(),
+            .top(),
             .centerX()
         ])
         adInformationStackView.widthAnchor.constraint(equalTo: adInformationScrollView.widthAnchor, multiplier: 0.95).isActive = true
@@ -52,11 +54,13 @@ final class AdDetailView: UIViewController {
 
 // MARK: - AdDetail View protocol conformance
 extension AdDetailView: AdDetailViewProtocol {
-    func bind(viewModel: AdDetailViewModel) {
+    @MainActor func bind(viewModel: AdDetailViewModel) {
         imageView.asyncImage(url: viewModel.imageURL)
         adInformationStackView.arrangedSubviews.forEach({ $0.removeFromSuperview() })
+        addSeparator()
         addTitle(text: viewModel.title)
-        addDateAndPro(date: viewModel.date, isPro: viewModel.isPro)
+        addCategoryAndPro(text: viewModel.category, isPro: viewModel.isPro)
+        addDate(date: viewModel.date)
         addPriceAndUrgent(price: viewModel.price, isUrgent: viewModel.isUrgent)
         addSeparator()
         addDescriptionView(text: viewModel.description)
@@ -64,60 +68,76 @@ extension AdDetailView: AdDetailViewProtocol {
     }
     
     private func addTitle(text: String) {
-        let titleLabel = viewFactory.createLabel(size: 18, weight: .bold, color: .black)
+        let titleLabel = viewFactory.createLabel(size: 18, weight: .bold, color: Colors.primaryBlack)
         titleLabel.numberOfLines = 0
         titleLabel.text = text
         adInformationStackView.addArrangedSubview(titleLabel)
     }
     
+    private func addCategoryAndPro(text: String, isPro: Bool) {
+        let contentView = UIView()
+        let categoryLabel = viewFactory.createLabel(size: 13, weight: .regular, color: Colors.primaryBlack)
+        categoryLabel.text = text
+        contentView.addSubview(categoryLabel)
+        categoryLabel.makeConstraintsToSuperview(constraints: [
+            .top(),
+            .leading(),
+            .centerY()
+        ])
+        if isPro {
+            let proView = createProView()
+            contentView.addSubview(proView)
+            proView.makeConstraints(constraints: [.horizontal(.equals(10))], view: categoryLabel)
+            proView.makeConstraintsToSuperview(constraints: [.top(), .centerY()])
+        }
+        
+        adInformationStackView.addArrangedSubview(contentView)
+
+    }
+    
     private func addDescriptionView(text: String) {
         addTitle(text: "Description")
-        let textLabel = viewFactory.createLabel(size: 13, weight: .regular, color: .black)
+        let textLabel = viewFactory.createLabel(size: 13, weight: .regular, color: Colors.primaryBlack)
         textLabel.numberOfLines = 0
         textLabel.text = text
         adInformationStackView.addArrangedSubview(textLabel)
     }
     
-    private func addDateAndPro(date: String, isPro: Bool) {
-        let stackView = UIStackView()
-        stackView.distribution = .fill
-        stackView.alignment = .fill
-        stackView.axis = .horizontal
-        stackView.spacing = 20
-        let dateLabel = viewFactory.createLabel(size: 13, weight: .regular, color: .darkGray)
+    private func addDate(date: String) {
+        let dateLabel = viewFactory.createLabel(size: 13, weight: .regular, color: Colors.primaryGray)
         dateLabel.text = date
-        stackView.addArrangedSubview(dateLabel)
-
-        if isPro {
-            stackView.addArrangedSubview(createProView())
-        }
         
-        adInformationStackView.addArrangedSubview(stackView)
+        adInformationStackView.addArrangedSubview(dateLabel)
     }
     
     private func createProView() -> UIView {
-        let proLabel = viewFactory.createLabel(size: 13, weight: .regular, color: .black)
+        let proLabel = viewFactory.createLabel(size: 13, weight: .regular, color: Colors.primaryBlack)
         proLabel.text = "PRO"
         proLabel.textAlignment = .center
-        let containerView = RoundedView(color: .black, content: proLabel, padding: 3)
-        return containerView
+        let roundedContainerView = viewFactory.createRoundedContainerView(content: proLabel)
+        return roundedContainerView
     }
     
     private func addPriceAndUrgent(price: String, isUrgent: Bool) {
-        let stackView = UIStackView()
-        stackView.distribution = .fill
-        stackView.alignment = .fill
-        stackView.axis = .horizontal
-        stackView.spacing = 20
-        let priceLabel = viewFactory.createLabel(size: 16, weight: .bold, color: .black)
+        let contentView = UIView()
+        let priceLabel = viewFactory.createLabel(size: 16, weight: .bold, color: Colors.primaryOrange)
         priceLabel.text = price
-        stackView.addArrangedSubview(priceLabel)
-
+        contentView.addSubview(priceLabel)
+        priceLabel.makeConstraintsToSuperview(constraints: [
+            .top(),
+            .leading(),
+            .centerY()
+        ])
+        
         if isUrgent {
-            stackView.addArrangedSubview(createIsUrgentView())
+            let urgentView = createIsUrgentView()
+            contentView.addSubview(urgentView)
+            urgentView.makeConstraints(constraints: [.horizontal(.equals(10))], view: priceLabel)
+            urgentView.makeConstraintsToSuperview(constraints: [.top(), .centerY()])
+            
         }
         
-        adInformationStackView.addArrangedSubview(stackView)
+        adInformationStackView.addArrangedSubview(contentView)
     }
 
     
@@ -125,12 +145,12 @@ extension AdDetailView: AdDetailViewProtocol {
         let urgentLabel = viewFactory.createLabel(size: 13, weight: .regular, color: .red)
         urgentLabel.text = "Urgent"
         urgentLabel.textAlignment = .center
-        let containerView = RoundedView(color: .red, content: urgentLabel, padding: 3)
+        let containerView =  viewFactory.createRoundedContainerView(content: urgentLabel, borderColor: .red)
         return containerView
     }
 
     private func addSeparator() {
-        let separator = SeparatorView()
+        let separator = viewFactory.createSeparatorView()
         adInformationStackView.addArrangedSubview(separator)
     }
 }

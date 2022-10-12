@@ -5,18 +5,24 @@ import UIKit
 /// Add here your methods for communication PRESENTER -> VIEW
 protocol AdDetailViewProtocol: AnyObject {
     var presenter: AdDetailPresenterProtocol?  { get set }
-    func bind(viewModel: AdDetailViewModel)
+    
+    /// Binds view with a given view Model
+    /// - Parameter viewModel: The view model to bind.
+    @MainActor func bind(viewModel: AdDetailViewModel)
 }
 
 //MARK: - Router
 /// Add here your methods for communication PRESENTER -> ROUTER
 protocol AdDetailRouterProtocol {
+    /// Closes the current module.
+    /// - Parameter animated: Determines wether the closing action should be animated.
     func close(animated: Bool)
 }
 
 //MARK: - Presenter
 /// Add here your methods for communication VIEW -> PRESENTER
 protocol AdDetailPresenterProtocol {
+    /// Handles incoming view events.
     func handle(viewEvent: AdDetailPresenterUnit.Event)
 }
 
@@ -24,15 +30,10 @@ protocol AdDetailPresenterProtocol {
 /// Add here your methods for communication PRESENTER -> INTERACTOR
 protocol AdDetailInteractorInputProtocol {
     var presenter: AdDetailInteractorOutputProtocol?  { get set }
-    var classifiedAd: ClassifiedAd { get }
+    
+    /// Gets the ad object
+    var ad: AdModel { get }
 }
 
 // Add here your methods for communication INTERACTOR -> PRESENTER
-protocol AdDetailInteractorOutputProtocol {
-}
-
-//MARK: - DataManager
-/// Add here your methods for communication INTERACTOR -> DATA MANAGER
-protocol AdDetailDataManagerProtocol {
-   
-}
+protocol AdDetailInteractorOutputProtocol: AnyObject {}

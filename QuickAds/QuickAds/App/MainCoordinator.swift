@@ -10,6 +10,10 @@ import UIKit
 
 final class MainCoordinator {
     
+    init() {
+
+    }
+    
     func start(in window:  UIWindow?) {
         let networkService = NetworkService()
         let adsListModule = AdsListRouter(
@@ -19,9 +23,26 @@ final class MainCoordinator {
         let adsListView = adsListModule.makeInitial()
         
         let navigationController = UINavigationController(rootViewController: adsListView)
-        navigationController.navigationBar.isTranslucent = false
+        updateNavigationBarAppearence(navigationController: navigationController)
+        
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
         
+    }
+    
+    private func updateNavigationBarAppearence(navigationController: UINavigationController) {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor.systemGray6
+        appearance.titleTextAttributes = [
+            .font: UIFont.boldSystemFont(ofSize: 20.0),
+            .foregroundColor: Colors.primaryBlack
+        ]
+
+        navigationController.navigationBar.tintColor = Colors.primaryBlack
+        navigationController.navigationBar.standardAppearance = appearance
+        navigationController.navigationBar.scrollEdgeAppearance = appearance
+        navigationController.navigationBar.isTranslucent = false
+        navigationController.navigationBar.barStyle = .black
     }
 }

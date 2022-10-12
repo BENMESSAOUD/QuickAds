@@ -1,7 +1,9 @@
 import Foundation
 
+/// Enmeration of possuble view events and user action the presenter could handle.
 enum AdDetailPresenterUnit {
     enum Event {
+        /// Handle view did load event.
         case viewDidLoad
     }
 }
@@ -30,24 +32,24 @@ final class AdDetailPresenter {
         self.router = router
         self.interactor.presenter = self
     }
-
 }
 
 //MARK: - AdDetail presenter protocol conformance
 extension AdDetailPresenter: AdDetailPresenterProtocol {
-    func handle(viewEvent: AdDetailPresenterUnit.Event) {
+    
+    @MainActor func handle(viewEvent: AdDetailPresenterUnit.Event) {
         switch viewEvent {
         case .viewDidLoad:
-            let classifiedAd = interactor.classifiedAd
+            let ad = interactor.ad
             let viewModel = AdDetailViewModel(
-                imageURL: classifiedAd.images_url?.thumb,
-                title: classifiedAd.title,
-                description: classifiedAd.description,
-                category: "\(classifiedAd.category_id)",
-                price: "\(classifiedAd.price) €",
-                date: dateFormatter.string(from: classifiedAd.creation_date),
-                isUrgent: classifiedAd.is_urgent,
-                isPro: classifiedAd.siret?.isEmpty == false
+                imageURL: ad.imagesUrl?.thumb,
+                title: ad.title,
+                description: ad.description,
+                category: ad.categoryName,
+                price: "\(ad.price) €",
+                date: dateFormatter.string(from: ad.date),
+                isUrgent: ad.isUrgent,
+                isPro: ad.isPro
             )
             view?.bind(viewModel: viewModel)
         }

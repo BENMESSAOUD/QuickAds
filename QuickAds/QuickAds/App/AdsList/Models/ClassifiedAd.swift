@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// This model is used to decode get ads list ws reponse.
 struct ClassifiedAd: Decodable {
     let id: Int64
     let title: String

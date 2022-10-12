@@ -8,24 +8,34 @@
 import UIKit
 
 class AdCollectionViewCell: UICollectionViewCell {
+    // MARK: Private properties
     private let viewFactory = ViewFactory()
+    
+    // MARK: UI Components
     private lazy var adImageView: UIImageView = viewFactory.createImage(image: UIImage(named: "noImage"))
-    private lazy var adTitleLabel: UILabel = viewFactory.createLabel(size: 14, weight: .medium, color: .black)
-    private lazy var adCategoryLabel: UILabel = viewFactory.createLabel(size: 11, weight: .regular, color: .darkGray)
-    private lazy var adPriceLabel: UILabel = viewFactory.createLabel(size: 14, weight: .bold, color: .black)
+    private lazy var adTitleLabel: UILabel = viewFactory.createLabel(size: 14, weight: .medium, color: Colors.primaryBlue)
+    private lazy var adCategoryLabel: UILabel = viewFactory.createLabel(size: 11, weight: .regular, color: Colors.primaryGray)
+    private lazy var adPriceLabel: UILabel = viewFactory.createLabel(size: 14, weight: .bold, color: Colors.primaryOrange)
     private lazy var adUrgentLabel: UILabel = viewFactory.createLabel(size: 11, weight: .regular, color: .red)
-    private lazy var adDateLabel: UILabel = viewFactory.createLabel(size: 11, weight: .regular, color: .darkGray)
-    private lazy var adUrgentView = RoundedView(color: .red, content: adUrgentLabel, padding: 3)
+    private lazy var adDateLabel: UILabel = viewFactory.createLabel(size: 11, weight: .regular, color: Colors.primaryGray)
+    private lazy var adUrgentView = viewFactory.createRoundedContainerView(content: adUrgentLabel, borderColor: .red)
     private lazy var informationView: UIStackView = UIStackView()
     
+    // MARK: Inits
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
     }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: Private methods
+
     private func setupUI() {
         adUrgentLabel.text = "Urgent"
-        adImageView.layer.cornerRadius = 3
+        adImageView.layer.cornerRadius = 5
         
         addSubview(adImageView)
         addSubview(informationView)
@@ -38,30 +48,30 @@ class AdCollectionViewCell: UICollectionViewCell {
         informationView.addArrangedSubview(adPriceLabel)
         informationView.addArrangedSubview(adCategoryLabel)
         informationView.addArrangedSubview(adDateLabel)
-        adUrgentView.sizeToFit()
         
         addConstraints()
     }
     
+    /// Add constraint between diffrent components
     private func addConstraints() {
         adImageView.makeConstraintsToSuperview(constraints: [
-            .topToTop(),
-            .leadingToLeading(),
-            .trailingToTrailing(),
-            .height(.equals(150))
+            .top(),
+            .leading(),
+            .trailing()
         ])
+        adImageView.makeConstraints(constraints: [.height(.equals(150))])
         informationView.makeConstraintsToSuperview(constraints: [
-            .leadingToLeading(),
-            .trailingToTrailing(),
-            .bottomToBottom()
+            .leading(),
+            .trailing(),
+            .bottom()
         ])
-        informationView.makeConstraints(constraints: [.topToBottom(.equals(4))], view: adImageView)
+        informationView.makeConstraints(constraints: [.vertical(.equals(4))], view: adImageView)
     }
+
+    // MARK: Public methods
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
+    /// Configures the collection view cell with a given `AdRow` model
+    /// - Parameter model: The ad row model.
     func configure(with model: AdRow) {
         adImageView.asyncImage(url: model.image)
         adTitleLabel.text = model.title

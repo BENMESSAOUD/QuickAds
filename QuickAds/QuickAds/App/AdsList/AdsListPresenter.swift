@@ -110,7 +110,7 @@ extension AdsListPresenter: AdsListInteractorOutputProtocol {
     }
     
     func loadCategoriesDidFail() {
-        
+        router.navigate(to: .alert(title: "Opps!", message: "Un problème technique est survenu lors de chargement des catégories."))
     }
     
 }

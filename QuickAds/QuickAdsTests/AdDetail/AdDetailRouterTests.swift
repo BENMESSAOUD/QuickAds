@@ -17,30 +17,7 @@ class AdDetailRouterTests: XCTestCase {
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
-
-//    func test_makeIntial_should_notCreateRetainCycle_when_always(){
-//        //arrage
-//        let adModel: AdModel = .init(
-//            title: "title",
-//            categoryName: "",
-//            date: Date(),
-//            description: "",
-//            isUrgent: true,
-//            imagesUrl: nil,
-//            price: 1,
-//            isPro: true
-//        )
-//        
-//        weak var viewController: UIViewController? = nil
-//        let router = AdDetailRouter(configuration: .init(ad: adModel))
-//        //acte
-//        autoreleasepool {
-//            viewController = router.makeInitial()
-//        }
-//        //assert
-//        XCTAssertNil(viewController)
-//    }
-//    
+    
     func test_makeIntial_should_createModuleWithAllItComponent_when_always(){
         //arrage
         let adModel: AdModel = .init(

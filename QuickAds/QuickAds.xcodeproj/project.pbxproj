@@ -45,6 +45,9 @@
 		1EC0DE6E28F6C4CC00D5BCE2 /* MockedAdDetailInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EC0DE6D28F6C4CC00D5BCE2 /* MockedAdDetailInteractor.swift */; };
 		1EC0DE7028F6C57000D5BCE2 /* MockedAdDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EC0DE6F28F6C57000D5BCE2 /* MockedAdDetailView.swift */; };
 		1EC0DE7228F6C5DC00D5BCE2 /* ModedAdDetailRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EC0DE7128F6C5DB00D5BCE2 /* ModedAdDetailRouter.swift */; };
+		1EC0DE7728F6F18600D5BCE2 /* MockedAdsListPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EC0DE7628F6F18600D5BCE2 /* MockedAdsListPresenter.swift */; };
+		1EC0DE7B28F6F75E00D5BCE2 /* AdsListInteractorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EC0DE7A28F6F75E00D5BCE2 /* AdsListInteractorTest.swift */; };
+		1EC0DE7D28F6F7B800D5BCE2 /* MockedNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EC0DE7C28F6F7B800D5BCE2 /* MockedNetworkService.swift */; };
 		1EFE755E28F3321D00D5FA79 /* UIImageView+AsyncLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EFE755D28F3321D00D5FA79 /* UIImageView+AsyncLoading.swift */; };
 		1EFE756028F4355A00D5FA79 /* CategoriesFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EFE755F28F4355A00D5FA79 /* CategoriesFilterView.swift */; };
 /* End PBXBuildFile section */
@@ -109,6 +112,9 @@
 		1EC0DE6D28F6C4CC00D5BCE2 /* MockedAdDetailInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockedAdDetailInteractor.swift; sourceTree = "<group>"; };
 		1EC0DE6F28F6C57000D5BCE2 /* MockedAdDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockedAdDetailView.swift; sourceTree = "<group>"; };
 		1EC0DE7128F6C5DB00D5BCE2 /* ModedAdDetailRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModedAdDetailRouter.swift; sourceTree = "<group>"; };
+		1EC0DE7628F6F18600D5BCE2 /* MockedAdsListPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockedAdsListPresenter.swift; sourceTree = "<group>"; };
+		1EC0DE7A28F6F75E00D5BCE2 /* AdsListInteractorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsListInteractorTest.swift; sourceTree = "<group>"; };
+		1EC0DE7C28F6F7B800D5BCE2 /* MockedNetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockedNetworkService.swift; sourceTree = "<group>"; };
 		1EFE755D28F3321D00D5FA79 /* UIImageView+AsyncLoading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+AsyncLoading.swift"; sourceTree = "<group>"; };
 		1EFE755F28F4355A00D5FA79 /* CategoriesFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesFilterView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -185,9 +191,9 @@
 		1E8A238A28F1847800ABCA5F /* QuickAdsTests */ = {
 			isa = PBXGroup;
 			children = (
+				1EC0DE7528F6F14800D5BCE2 /* NetworkService */,
+				1EC0DE7328F6F13200D5BCE2 /* AdsList */,
 				1EC0DE6728F6BE5C00D5BCE2 /* AdDetail */,
-				1E8A23B228F18DE900ABCA5F /* Mock */,
-				1E8A238B28F1847800ABCA5F /* NetworkServiceTests.swift */,
 			);
 			path = QuickAdsTests;
 			sourceTree = "<group>";
@@ -288,6 +294,33 @@
 				1EC0DE7128F6C5DB00D5BCE2 /* ModedAdDetailRouter.swift */,
 			);
 			path = Mock;
+			sourceTree = "<group>";
+		};
+		1EC0DE7328F6F13200D5BCE2 /* AdsList */ = {
+			isa = PBXGroup;
+			children = (
+				1EC0DE7428F6F14100D5BCE2 /* Mock */,
+				1EC0DE7A28F6F75E00D5BCE2 /* AdsListInteractorTest.swift */,
+			);
+			path = AdsList;
+			sourceTree = "<group>";
+		};
+		1EC0DE7428F6F14100D5BCE2 /* Mock */ = {
+			isa = PBXGroup;
+			children = (
+				1EC0DE7628F6F18600D5BCE2 /* MockedAdsListPresenter.swift */,
+				1EC0DE7C28F6F7B800D5BCE2 /* MockedNetworkService.swift */,
+			);
+			path = Mock;
+			sourceTree = "<group>";
+		};
+		1EC0DE7528F6F14800D5BCE2 /* NetworkService */ = {
+			isa = PBXGroup;
+			children = (
+				1E8A23B228F18DE900ABCA5F /* Mock */,
+				1E8A238B28F1847800ABCA5F /* NetworkServiceTests.swift */,
+			);
+			path = NetworkService;
 			sourceTree = "<group>";
 		};
 		1EFE756128F4358200D5FA79 /* Models */ = {
@@ -474,11 +507,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				1EC0DE6928F6BE9C00D5BCE2 /* AdDetailRouterTests.swift in Sources */,
+				1EC0DE7B28F6F75E00D5BCE2 /* AdsListInteractorTest.swift in Sources */,
+				1EC0DE7D28F6F7B800D5BCE2 /* MockedNetworkService.swift in Sources */,
 				1EC0DE7028F6C57000D5BCE2 /* MockedAdDetailView.swift in Sources */,
 				1E8A23B628F196D600ABCA5F /* MockedURLSession.swift in Sources */,
 				1EC0DE6E28F6C4CC00D5BCE2 /* MockedAdDetailInteractor.swift in Sources */,
 				1E8A238C28F1847800ABCA5F /* NetworkServiceTests.swift in Sources */,
 				1E8A23B428F18E3B00ABCA5F /* MockedDecoder.swift in Sources */,
+				1EC0DE7728F6F18600D5BCE2 /* MockedAdsListPresenter.swift in Sources */,
 				1EC0DE7228F6C5DC00D5BCE2 /* ModedAdDetailRouter.swift in Sources */,
 				1EC0DE6B28F6C39E00D5BCE2 /* AdDetailsPresenterTests.swift in Sources */,
 			);

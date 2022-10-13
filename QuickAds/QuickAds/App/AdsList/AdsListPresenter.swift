@@ -44,10 +44,11 @@ final class AdsListPresenter {
 
 //MARK: - AdsList presenter protocol conformance
 extension AdsListPresenter: AdsListPresenterProtocol {
-    @MainActor func handle(viewEvent: AdsListPresenterUnit.Event) {
+    func handle(viewEvent: AdsListPresenterUnit.Event) {
         switch viewEvent {
         case .viewDidLoad:
-            interactor.loadAll()
+            interactor.loadCategories()
+            interactor.loadAds()
             view?.bind(viewModel: viewModel)
         }
     }

@@ -3,6 +3,8 @@ import Darwin
 final class AdsListInteractor {
     
     weak var presenter: AdsListInteractorOutputProtocol?
+    
+    // MARK: Private properties
     private let networkService: NetworkServiceProtocol
     private var adsList: [ClassifiedAd] = []
     private var adsCategories: [Category] = []
@@ -13,10 +15,15 @@ final class AdsListInteractor {
         self.filter = filter ?? .init(categories: [])
     }
     
+    // MARK: Private methods
+    
+    /// Creates error message based on a given `NetworkError` code.
+    /// - Parameter error: The error code.
+    /// - Returns  A string value containing the error message.
     private func createErrorMessage(_ error: NetworkError) -> String {
         switch error {
         case .wrongURLFormat:
-            return "Une erreur technqiue est survenue. Veuillez contacter le support."
+            return "Une erreur technique est survenue. Veuillez contacter le support."
         case .badJSONFormat:
             return "Structure de contenu est inconnue. Veillez réessyer ultérieurement."
         case .badRequest:
@@ -32,13 +39,22 @@ final class AdsListInteractor {
         }
     }
     
-    private func filtreAds(by categories: [Int64]) -> [ClassifiedAd] {
+    /// Filters Ads list by categories
+    ///
+    /// - Parameter categories: The list of allowed categories
+    /// - Returns A filtered Ads list by the given categories array. If the passed categories array is empty, the result will be an array will all fetched Ads.
+    private func filterAds(by categories: [Int64]) -> [ClassifiedAd] {
         if categories.isEmpty {
             return adsList
         }
         return adsList.filter({ categories.contains($0.category_id) })
     }
     
+    /// Sorts a given Ads list by the urgent status. All urgent ads should be at the top of the list.
+    ///
+    /// If two ads have the same urgent value, they will be sorted by their creation date.
+    /// - Parameter list: The list to sort.
+    ///- Returns A sorted Ads list.
     private func sortUrgentAds(list: [ClassifiedAd]) -> [ClassifiedAd] {
         list.sorted(by: {
             if $0.is_urgent == $1.is_urgent {
@@ -48,10 +64,10 @@ final class AdsListInteractor {
         })
     }
     
+    /// Asynchrony fetch of all Ads.
     private func loadAllAds() {
         Task {
             do {
-                
                 let result = try await networkService.fetchAds()
                 switch result {
                 case let .success(adsList):
@@ -70,6 +86,7 @@ final class AdsListInteractor {
         }
     }
     
+    /// Asynchrony fetch of all Categories.
     private func loadAllCategories() {
         Task {
             do {
@@ -88,9 +105,10 @@ final class AdsListInteractor {
         }
     }
     
+    /// Applies current filter and ask the presenter to update it content with the new ads and categories list.
     private func applyFilter() {
-        let filtredList = filtreAds(by: filter.categories)
-        presenter?.updateContent(filtredList, categories: adsCategories)
+        let filteredList = filterAds(by: filter.categories)
+        presenter?.updateContent(filteredList, categories: adsCategories)
     }
     
     
@@ -98,10 +116,11 @@ final class AdsListInteractor {
  
 // MARK: - AdsList Interactor Input Protocol conformance
 extension AdsListInteractor: AdsListInteractorInputProtocol {
-    
-    func loadAll() {
-        loadAllCategories()
+    func loadAds() {
         loadAllAds()
+    }
+    func loadCategories() {
+        loadAllCategories()
     }
     
     func getCategoryName(id: Int64) -> String? {

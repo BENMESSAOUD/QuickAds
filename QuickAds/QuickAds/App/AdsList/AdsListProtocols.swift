@@ -5,7 +5,7 @@ import UIKit
 /// Add here your methods for communication PRESENTER -> VIEW
 protocol AdsListViewProtocol: AnyObject {
     var presenter: AdsListPresenterProtocol?  { get set }
-    @MainActor func bind(viewModel: AdsListViewModel)
+    func bind(viewModel: AdsListViewModel)
 }
 
 //MARK: - Router
@@ -25,7 +25,8 @@ protocol AdsListPresenterProtocol {
 /// Add here your methods for communication PRESENTER -> INTERACTOR
 protocol AdsListInteractorInputProtocol {
     var presenter: AdsListInteractorOutputProtocol?  { get set }
-    func loadAll()
+    func loadAds()
+    func loadCategories()
     func getCategoryName(id: Int64) -> String?
     func getSelectedCategoriesFilter() -> [Int64]
     func addCategoryFilter(id: Int64)

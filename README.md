@@ -4,7 +4,7 @@
 L'application Quick a été développée dans le cadre d'un test technique pour LeBonCoin.
 # A propos de QuickAds
 - - - -
-![Swift 5.6+](https://img.shields.io/badge/Swift-3.0+-orange.svg) ![Platform](https://img.shields.io/badge/platforms-iOS%2014.0+-333333.svg) ![Devices](https://img.shields.io/badge/Device-iPhone%20|%20iPad-333333.svg)
+![Swift 5.6+](https://img.shields.io/badge/Swift-5.6+-orange.svg) ![Platform](https://img.shields.io/badge/platforms-iOS%2014.0+-333333.svg) ![Devices](https://img.shields.io/badge/Device-iPhone%20|%20iPad-333333.svg)
 
 QuickAds est une application qui permet d'afficher des petites annonces et cosulter le detail de chaque annonce. Un Filtre par catégorie d'annonce est aussi proposé.
 
